@@ -42,7 +42,6 @@ class OutputType(TypedDict):
     action: str  # a JS action name (from JSAction enum)
 
 
-
 class FauxInterfaceFactory:
     """
     An example interface factory. Not real.
@@ -101,3 +100,8 @@ class FauxInterfaceFactory:
     def front_end_fields(self):
         return {key: self.python2html_mapping[value].format(name=key) for key, value in self.fun.__annotations__.items()
                 if key != 'return'}
+
+    # ----------------------------------------
+
+    @staticmethod
+    def get_sdf_block(sdf):

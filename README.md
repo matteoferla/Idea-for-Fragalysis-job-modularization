@@ -1,6 +1,7 @@
 # Idea for Fragalysis job modularization
 A barebone hypothetical example for Fragalysis jobs
 for discussion purposes of how a modularised job could look like to avoid continual reinvention and training.
+This is not a discussion of deployment, but of standardisation of input and output.
 
 Say I have a simple snippet of code that is independent of the specific details of API dialogue,
 in this case [find_neighbors.py](find_neighbors.py) which finds the neighbours of a given molecule.
@@ -19,8 +20,10 @@ distance_threshold = 6.
 hits: Dict[str, Chem.Mol] = read_file('hits.sdf')
 neighbor_names: List[str] = get_close_names(target_name, hits, distance_threshold)
 ```
+## Interface
+> There is a need of a standardised python interface IMO.
 
-To hypothetically deploy it I would need to have it with a clean installation, eg. DockerFile, sure, but also
+To hypothetically deploy the above I would need to have it with a clean installation, eg. DockerFile, sure, but also
 **I would need standardised input and output, which is the key point of this discussion exercise**.
 
 To this end two things are needed, a generic interface factory that does stuff with standardised inputs and outputs,
@@ -81,6 +84,9 @@ class OutputType(TypedDict):
     results: Any  # jsonable
     action: str  # a JS action name (from JSAction enum)
 ```
+## JS action repertoire
+
+> There is a need of a standardised repertoire of actions that the front end can take IMO.
 
 Here JSAction is an enum of possible actions that the front end can take, for example:
 
@@ -129,10 +135,12 @@ like `FauxJSInterface.showRHSHits(names)` would be something wildly complicated 
 ```javascript
 const showRHSHit = (name) => {const idx; nameArray.indexOf(name);
                               component.addRepresentation('ball+stick', {sele: `:LIG and :${idx}`});
-                              etc.
+                              // etc ect
                               }
 response.results.forEach(name => showRHSHit(name);
 ```
+This is painful and reinvents the wheel in most cases, hence why the enum example had `other_JS` as an option
+for the few exceptions.
 
 Using the three parts together (the interface factory, the adapter, and the independent code):
 
@@ -150,22 +158,14 @@ I would get `{'status': 'success', 'results': ['x0071_0B', 'x0086_0A', ...],
 In terms of front end field population, I believe it is sorted
 and already present as a yaml file, which is perfect.
 So this is not needed in the discussion,
-but here is a crappy way of doing it because it is a related topic.
+but in `FauxInterfaceFactory(main).front_end_fields` is a crappy way of doing it because it is a related topic.
 
-```python
-from adaptor import main
-from interface_factory import FauxInterfaceFactory
+## ISpyB
 
-interface = FauxInterfaceFactory(main)
-interface.front_end_fields
-```
-Which gives:
-```json
-{'target_name': 'input type="text" name="target_name"',
- 'sdf_block': 'input type="text" name="sdf_block"',
- 'distance_threshold': 'input type="number" name="distance_threshold"'}
-```
-
+I am skipping a step. The job needs to be given the sdf block (not file as they would be in different places).
+As the job request goes Fragalysis before being passed to Squonk,
+then the job request could have say requires_sdf_block = true, and the view in Fragalysis would have to provide it
+to the run.
 
 
 
