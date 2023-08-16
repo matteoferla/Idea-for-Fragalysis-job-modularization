@@ -162,6 +162,8 @@ but in `FauxInterfaceFactory(main).front_end_fields` is a crappy way of doing it
 
 ## ISpyB
 
+> Why not pass the SDF block to the job request and deal with permissions Fragalysis side?
+
 I am skipping a step. The job needs to be given the sdf block (not file as they would be in different places).
 As the job request goes Fragalysis before being passed to Squonk,
 then the job request could have say requires_sdf_block = true, and the view in Fragalysis would have to provide it
