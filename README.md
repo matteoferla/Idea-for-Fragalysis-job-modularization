@@ -103,6 +103,26 @@ jobPromise.then(response => FauxJSInterface[response.action](response.results))
 ```
 Where `FauxJSInterface` is a hypothetical front end class with easy methods.
 
+```javascript
+class FauxJSInterface {
+    show_toast(message) {
+        // show a toast message, good for errors
+    }
+    show_LHS_hits(names) {
+        // show the hits from the LHS
+    }
+    add_RHS_hits(sdf_block) {
+        // add to RHS tab
+    }
+    show_modal(html) {
+        // show a modal, example with a table or plotly as defined in HTML passed.
+    }
+    other_JS(js_snippet) {
+        // do some other JS task
+    }
+}
+```
+
 An alternative could be writing full JS code in the action, but that is painful.
 like `FauxJSInterface.showRHSHits(names)` would be something wildly complicated like:
 
@@ -125,7 +145,12 @@ interface(request_params)
 ```
 Say `request_params` is `{'target_name': 'x0071_0B', 'sdf_block': '...', 'distance_threshold': 1.}`
 I would get `{'status': 'success', 'results': ['x0071_0B', 'x0086_0A', ...],
-              'action': 'FragalysisJSInterface.showHits(["x0071_0B","x0086_0A", ...]);'}`
+              'action': 'show_LHS_hits'}`
+
+In terms of front end field population, I believe it is sorted
+and already present as a yaml file, which is perfect.
+So this is not needed in the discussion,
+but here is a crappy way of doing it because it is a related topic.
 
 ```python
 from adaptor import main
@@ -134,8 +159,7 @@ from interface_factory import FauxInterfaceFactory
 interface = FauxInterfaceFactory(main)
 interface.front_end_fields
 ```
-Would give somthing to populate the front end fields,
-which I understand is already present as a yaml file. So is covered, but a way to generate it from the code would be nice.
+Which gives:
 ```json
 {'target_name': 'input type="text" name="target_name"',
  'sdf_block': 'input type="text" name="sdf_block"',
