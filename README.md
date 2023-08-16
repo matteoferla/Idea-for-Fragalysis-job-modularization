@@ -155,19 +155,35 @@ Say `request_params` is `{'target_name': 'x0071_0B', 'sdf_block': '...', 'distan
 I would get `{'status': 'success', 'results': ['x0071_0B', 'x0086_0A', ...],
               'action': 'show_LHS_hits'}`
 
-In terms of front end field population, I believe it is sorted
+In terms of front end field population, I believe it is partially sorted
 and already present as a yaml file, which is perfect.
 So this is not needed in the discussion,
 but in `FauxInterfaceFactory(main).front_end_fields` is a crappy way of doing it because it is a related topic.
+
+But the point is the user decided when writing the yaml file what the input fields are,
+so no issue there, bar for some extra info, which should most likely not be passed
+from the font end, eg. sdf of hits or PDB.
 
 ## ISpyB
 
 > Why not pass the SDF block to the job request and deal with permissions Fragalysis side?
 
-I am skipping a step. The job needs to be given the sdf block (not file as they would be in different places).
+I am skipping a step. The job needs to be given a PDB block or an sdf block
+(not file as they would be in different places).
 As the job request goes Fragalysis before being passed to Squonk,
 then the job request could have say requires_sdf_block = true, and the view in Fragalysis would have to provide it
 to the run.
+Likewise for RHS data... or data cached in a data bucket container.
+
+This would mean that some fields would be reserved:
+
+* `fragalysis_target = GFP`
+* `requires_sdf_block = true`
+* `requires_pdb_block = 'x0123_0A'`
+* `requires_compound_data = 'Matteo-submission-231225'`
+* `requires_cached_data = s0m4-random-h4sh`
+
+But I assume this was addressed when Fragmenstein job was made?
 
 
 
